@@ -2,8 +2,6 @@ import numpy as np
 import math
 import pandas as pd
 import geopandas as gpd
-from metaflow import step
-
 
 def find_diff_rows_number(df1, df2):
     result = f"The number of different rows between 2 df: {len(df1[~df1.apply(tuple,1).isin(df2.apply(tuple,1))])}"
@@ -19,9 +17,8 @@ def find_diff_rows_and_cells(df1, df2):
     changed_to = df2.values[difference_locations]
     diff_df = pd.DataFrame({'from': changed_from, 'to': changed_to}, index=changed.index)
     # even though both df1['col1'] and df2['col1'] are NaN, diff_df contains the rows. remove them.
-    idx = diff_df.index[diff_df.notnull().all(axis=1)]
-    non_df = diff_df.iloc[idx]
-    return non_df
+    diff_df_dropna = diff_df.dropna(how='all')
+    return diff_df_dropna
 
 
 def compare_df(df1, df2, align_axis=1, keep_shape=False, keep_equal=False):
